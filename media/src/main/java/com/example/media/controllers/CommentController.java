@@ -1,6 +1,7 @@
 package com.example.media.controllers;
 
 import com.example.media.entities.Comment;
+import com.example.media.requests.CommentCreateRequest;
 import com.example.media.services.CommentService;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,13 +37,14 @@ public class CommentController {
     }
 
     @PostMapping
-    public Comment createComment(@RequestBody Comment comment) {
-        return commentService.createComment(comment);
+    public Comment createComment(@RequestBody CommentCreateRequest commentCreateRequest) {
+        return commentService.createComment(commentCreateRequest);
     }
 
     @PutMapping("/{commentId}")
-    public Comment updateComment(@PathVariable Long commentId, @RequestBody Comment newComment) {
-        return commentService.updateComment(commentId, newComment);
+    public Comment updateComment(@PathVariable Long commentId,
+                                 @RequestBody CommentCreateRequest commentCreateRequest) {
+        return commentService.updateComment(commentId, commentCreateRequest);
     }
 
     @DeleteMapping("/{commentId}")

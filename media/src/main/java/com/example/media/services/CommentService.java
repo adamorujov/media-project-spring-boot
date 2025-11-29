@@ -6,6 +6,7 @@ import com.example.media.entities.User;
 import com.example.media.repos.CommentRepository;
 import com.example.media.repos.PostRepository;
 import com.example.media.repos.UserRepository;
+import com.example.media.requests.CommentCreateRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -43,15 +44,30 @@ public class CommentService {
         return commentRepository.findById(Id).orElse(null);
     }
 
-    public Comment createComment(Comment comment) {
-        return commentRepository.save(comment);
+    public Comment createComment(CommentCreateRequest commentCreateRequest) {
+        Optional<Post> post = postRepository.findById(commentCreateRequest.getPostId());
+        Optional<User> user = userRepository.findById(commentCreateRequest.getUserId());
+        if (post.isEmpty() && user.isEmpty()) {
+            throw new RuntimeException("Post and user does not exist.");
+        } else if (post.isEmpty()) {
+            throw new RuntimeException("Post does not exist.");
+        } else if (user.isEmpty()) {
+            throw new RuntimeException("User does not exist.");
+        } else {
+            Comment comment = new Comment();
+            comment.setId(commentCreateRequest.getId());
+            comment.setPost(post.get());
+            comment.setUser(user.get());
+            comment.setText(commentCreateRequest.getText());
+            return commentRepository.save(comment);
+        }
     }
 
-    public Comment updateComment(Long Id, Comment newComment) {
+    public Comment updateComment(Long Id, CommentCreateRequest commentCreateRequest) {
         Optional<Comment> comment = commentRepository.findById(Id);
         if (comment.isPresent()) {
             Comment foundComment = comment.get();
-            foundComment.setText(newComment.getText());
+            foundComment.setText(commentCreateRequest.getText());
             commentRepository.save(foundComment);
             return foundComment;
         } else {

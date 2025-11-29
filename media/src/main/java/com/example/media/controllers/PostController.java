@@ -1,6 +1,8 @@
 package com.example.media.controllers;
 
 import com.example.media.entities.Post;
+import com.example.media.requests.PostCreateRequest;
+import com.example.media.requests.PostUpdateRequest;
 import com.example.media.services.PostService;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,22 +23,27 @@ public class PostController {
         return postService.getAllPosts();
     }
 
+    @GetMapping("/user/{userId}")
+    public List<Post> getUserPosts(@PathVariable Long userId) {
+        return postService.getUserPosts(userId);
+    }
+
     @GetMapping("/{postId}")
-    public Post getPost(Long postId) {
+    public Post getPost(@PathVariable Long postId) {
         return postService.getPost(postId);
     }
 
     @PostMapping
-    public Post createPost(@RequestBody Post post) {
-        return postService.createPost(post);
+    public Post createPost(@RequestBody PostCreateRequest postCreateRequest) {
+        return postService.createPost(postCreateRequest);
     }
 
     @PutMapping("/{postId}")
-    public Post updatePost(@PathVariable Long postId, @RequestBody Post post) {
-        return postService.updatePost(postId, post);
+    public Post updatePost(@PathVariable Long postId, @RequestBody PostUpdateRequest postUpdateRequest) {
+        return postService.updatePost(postId, postUpdateRequest);
     }
 
-    @DeleteMapping("/postId")
+    @DeleteMapping("/{postId}")
     public void deletePost(@PathVariable Long postId) {
         postService.deletePost(postId);
     }
