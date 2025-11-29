@@ -1,55 +1,44 @@
 package com.example.media.controllers;
 
 import com.example.media.entities.Post;
-import com.example.media.repos.PostRepository;
-import com.example.media.repos.UserRepository;
+import com.example.media.services.PostService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Optional;
+
 
 @RestController
 @RequestMapping("/posts")
 public class PostController {
-    private final PostRepository postRepository;
+    private final PostService postService;
 
-    public PostController(PostRepository postRepository) {
-        this.postRepository = postRepository;
+    public PostController(PostService postService) {
+        this.postService = postService;
     }
 
     @GetMapping
-    public List<Post> getAllPosts() {
-        return postRepository.findAll();
+    public List<Post> getALlPosts() {
+        return postService.getAllPosts();
+    }
+
+    @GetMapping("/{postId}")
+    public Post getPost(Long postId) {
+        return postService.getPost(postId);
     }
 
     @PostMapping
     public Post createPost(@RequestBody Post post) {
-        return postRepository.save(post);
-    }
-
-    @GetMapping("/{postId}")
-    public Post getPostById(@PathVariable Long postId) {
-        return postRepository.findById(postId).orElse(null);
+        return postService.createPost(post);
     }
 
     @PutMapping("/{postId}")
-    public Post updatePost(@PathVariable Long postId, @RequestBody Post newPost) {
-        Optional<Post> post = postRepository.findById(postId);
-        if (post.isPresent()) {
-            Post foundPost = post.get();
-            foundPost.setTitle(newPost.getTitle());
-            foundPost.setText(newPost.getText());
-            postRepository.save(foundPost);
-            return foundPost;
-        } else {
-            return null;
-        }
+    public Post updatePost(@PathVariable Long postId, @RequestBody Post post) {
+        return postService.updatePost(postId, post);
     }
 
-    @DeleteMapping("/{postId}")
+    @DeleteMapping("/postId")
     public void deletePost(@PathVariable Long postId) {
-        postRepository.deleteById(postId);
-
+        postService.deletePost(postId);
     }
 
 }
