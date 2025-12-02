@@ -7,6 +7,7 @@ import com.example.media.repos.CommentRepository;
 import com.example.media.repos.PostRepository;
 import com.example.media.repos.UserRepository;
 import com.example.media.requests.CommentCreateRequest;
+import com.example.media.responses.CommentResponse;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -24,29 +25,35 @@ public class CommentService {
         this.userRepository = userRepository;
     }
 
-    public List<Comment> getAllComments() {
-        return commentRepository.findAll();
+    public List<CommentResponse> getAllComments() {
+        List<Comment> comments = commentRepository.findAll();
+        return comments.stream().map(CommentResponse::new).toList();
     }
 
-    public List<Comment> getPostComments(Long postId) {
+    public List<CommentResponse> getPostComments(Long postId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new RuntimeException("Post does not exist."));
-        return commentRepository.findByPostId(postId);
+        List<Comment> comments = commentRepository.findByPostId(postId);
+        return comments.stream().map(CommentResponse::new).toList();
     }
 
-    public List<Comment> getUserComments(Long userId) {
+    public List<CommentResponse> getUserComments(Long userId) {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User does not exist."));
-        return commentRepository.findByUserId(userId);
+        List<Comment> comments = commentRepository.findByUserId(userId);
+        return comments.stream().map(CommentResponse::new).toList();
     }
 
-    public Comment getComment(Long Id) {
-        return commentRepository.findById(Id).orElse(null);
+    public CommentResponse getComment(Long Id) {
+        Optional<Comment> comment = commentRepository.findById(Id);
+        return comment.map(CommentResponse::new).orElse(null);
     }
 
-    public Comment createComment(CommentCreateRequest commentCreateRequest) {
+    public CommentResponse createComment(CommentCreateRequest commentCreateRequest) {
         Optional<Post> post = postRepository.findById(commentCreateRequest.getPostId());
         Optional<User> user = userRepository.findById(commentCreateRequest.getUserId());
+        System.out.println(post);
+        System.out.println(user);
         if (post.isEmpty() && user.isEmpty()) {
             throw new RuntimeException("Post and user does not exist.");
         } else if (post.isEmpty()) {
@@ -55,21 +62,24 @@ public class CommentService {
             throw new RuntimeException("User does not exist.");
         } else {
             Comment comment = new Comment();
+            System.out.println(commentCreateRequest.getId());
+            System.out.println(commentCreateRequest.getId());
             comment.setId(commentCreateRequest.getId());
             comment.setPost(post.get());
             comment.setUser(user.get());
             comment.setText(commentCreateRequest.getText());
-            return commentRepository.save(comment);
+            commentRepository.save(comment);
+            return new CommentResponse(comment);
         }
     }
 
-    public Comment updateComment(Long Id, CommentCreateRequest commentCreateRequest) {
+    public CommentResponse updateComment(Long Id, CommentCreateRequest commentCreateRequest) {
         Optional<Comment> comment = commentRepository.findById(Id);
         if (comment.isPresent()) {
             Comment foundComment = comment.get();
             foundComment.setText(commentCreateRequest.getText());
             commentRepository.save(foundComment);
-            return foundComment;
+            return new CommentResponse(foundComment);
         } else {
             return null;
         }

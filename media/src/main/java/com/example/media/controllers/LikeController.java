@@ -1,6 +1,8 @@
 package com.example.media.controllers;
 
 import com.example.media.entities.Like;
+import com.example.media.requests.LikeCreateRequest;
+import com.example.media.responses.LikeResponse;
 import com.example.media.services.LikeService;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,32 +18,32 @@ public class LikeController {
     }
 
     @GetMapping
-    public List<Like> getAllLikes() {
+    public List<LikeResponse> getAllLikes() {
         return likeService.getAllLikes();
     }
 
     @GetMapping("/post/{postId}")
-    public List<Like> getPostLikes(@PathVariable Long postId) {
+    public List<LikeResponse> getPostLikes(@PathVariable Long postId) {
         return likeService.getPostLikes(postId);
     }
 
     @GetMapping("/user/{userId}")
-    public List<Like> getUserLikes(@PathVariable Long userId) {
+    public List<LikeResponse> getUserLikes(@PathVariable Long userId) {
         return likeService.getUserLikes(userId);
     }
 
     @GetMapping("/{likeId}")
-    public Like getLike(@PathVariable Long likeId) {
+    public LikeResponse getLike(@PathVariable Long likeId) {
         return likeService.getLike(likeId);
     }
 
     @PostMapping()
-    public Like createLike(@RequestBody Like like) {
-        return likeService.createLike(like);
+    public LikeResponse createLike(@RequestBody LikeCreateRequest likeCreateRequest) {
+        return likeService.createLike(likeCreateRequest);
     }
 
     @DeleteMapping("/{likeId}")
-    public void deleteLike(@PathVariable Long Id) {
-        likeService.deleteLike(Id);
+    public void deleteLike(@PathVariable Long likeId) {
+        likeService.deleteLike(likeId);
     }
 }

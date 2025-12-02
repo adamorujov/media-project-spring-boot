@@ -2,6 +2,7 @@ package com.example.media.controllers;
 
 import com.example.media.entities.User;
 import com.example.media.repos.UserRepository;
+import com.example.media.requests.UserUpdateRequest;
 import com.example.media.services.UserService;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,8 +34,8 @@ public class UserController {
     }
 
     @PutMapping("/{userId}")
-    public User updateUser(@PathVariable Long userId, @RequestBody User newUser) {
-        return userService.updateUser(userId, newUser);
+    public User updateUser(@PathVariable Long userId, @RequestBody UserUpdateRequest userUpdateRequest) {
+        return userService.updateUser(userId, userUpdateRequest);
     }
 
     @DeleteMapping("/{userId}")

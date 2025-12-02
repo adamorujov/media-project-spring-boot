@@ -6,6 +6,7 @@ import com.example.media.repos.PostRepository;
 import com.example.media.repos.UserRepository;
 import com.example.media.requests.PostCreateRequest;
 import com.example.media.requests.PostUpdateRequest;
+import com.example.media.responses.PostResponse;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,19 +22,27 @@ public class PostService {
         this.userRepository = userRepository;
     }
 
-    public List<Post> getAllPosts() {
-        return postRepository.findAll();
+    public List<PostResponse> getAllPosts() {
+        List<Post> posts = postRepository.findAll();
+        return posts.stream().map(PostResponse::new).toList();
     }
 
-    public List<Post> getUserPosts(Long userId) {
-        return postRepository.findUserPosts(userId);
+    public List<PostResponse> getUserPosts(Long userId) {
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isPresent()) {
+            List<Post> posts = postRepository.findUserPosts(userId);
+            return posts.stream().map(PostResponse::new).toList();
+        } else {
+            return null;
+        }
     }
 
-    public Post getPost(Long Id) {
-        return postRepository.findById(Id).orElse(null);
+    public PostResponse getPost(Long Id) {
+        Optional<Post> post = postRepository.findById(Id);
+        return post.map(PostResponse::new).orElse(null);
     }
 
-    public Post createPost(PostCreateRequest postCreateRequest) {
+    public PostResponse createPost(PostCreateRequest postCreateRequest) {
         Optional<User> user = userRepository.findById(postCreateRequest.getUserId());
         if (user.isPresent()) {
             Post post = new Post();
@@ -42,20 +51,20 @@ public class PostService {
             post.setTitle(postCreateRequest.getTitle());
             post.setText(postCreateRequest.getText());
             postRepository.save(post);
-            return post;
+            return new PostResponse(post);
         } else {
             return null;
         }
     }
 
-    public Post updatePost(Long Id, PostUpdateRequest postUpdateRequest) {
+    public PostResponse updatePost(Long Id, PostUpdateRequest postUpdateRequest) {
         Optional<Post> post = postRepository.findById(Id);
         if (post.isPresent()) {
             Post foundPost = post.get();
-            foundPost.setTitle(postUpdateRequest.getText());
+            foundPost.setTitle(postUpdateRequest.getTitle());
             foundPost.setText(postUpdateRequest.getText());
             postRepository.save(foundPost);
-            return foundPost;
+            return new PostResponse(foundPost);
         } else {
             return null;
         }

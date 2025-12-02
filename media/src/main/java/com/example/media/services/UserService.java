@@ -2,6 +2,7 @@ package com.example.media.services;
 
 import com.example.media.entities.User;
 import com.example.media.repos.UserRepository;
+import com.example.media.requests.UserUpdateRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -27,12 +28,12 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public User updateUser(Long Id, User newUser) {
+    public User updateUser(Long Id, UserUpdateRequest userUpdateRequest) {
         Optional<User> user = userRepository.findById(Id);
         if (user.isPresent()) {
             User foundUser = user.get();
-            foundUser.setUsername(newUser.getUsername());
-            foundUser.setPassword(newUser.getPassword());
+            foundUser.setUsername(userUpdateRequest.getUsername());
+            foundUser.setPassword(userUpdateRequest.getPassword());
             userRepository.save(foundUser);
             return foundUser;
         } else {
