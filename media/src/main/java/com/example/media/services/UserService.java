@@ -3,6 +3,7 @@ package com.example.media.services;
 import com.example.media.entities.User;
 import com.example.media.repos.UserRepository;
 import com.example.media.requests.UserUpdateRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

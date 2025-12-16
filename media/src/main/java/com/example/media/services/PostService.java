@@ -1,11 +1,13 @@
 package com.example.media.services;
 
+import com.example.media.entities.Like;
 import com.example.media.entities.Post;
 import com.example.media.entities.User;
 import com.example.media.repos.PostRepository;
 import com.example.media.repos.UserRepository;
 import com.example.media.requests.PostCreateRequest;
 import com.example.media.requests.PostUpdateRequest;
+import com.example.media.responses.LikeResponse;
 import com.example.media.responses.PostResponse;
 import org.springframework.stereotype.Service;
 
@@ -24,14 +26,22 @@ public class PostService {
 
     public List<PostResponse> getAllPosts() {
         List<Post> posts = postRepository.findAll();
-        return posts.stream().map(PostResponse::new).toList();
+        return posts.stream().map((post) -> {
+            List<Like> likes = postRepository.findLikes(post.getId());
+            List<LikeResponse> likeResponses = likes.stream().map(LikeResponse::new).toList();
+            return new PostResponse(post, likeResponses);
+        }).toList();
     }
 
     public List<PostResponse> getUserPosts(Long userId) {
         Optional<User> user = userRepository.findById(userId);
         if (user.isPresent()) {
             List<Post> posts = postRepository.findUserPosts(userId);
-            return posts.stream().map(PostResponse::new).toList();
+            return posts.stream().map((post) -> {
+                List<Like> likes = postRepository.findLikes(post.getId());
+                List<LikeResponse> likeResponses = likes.stream().map(LikeResponse::new).toList();
+                return new PostResponse(post, likeResponses);
+            }).toList();
         } else {
             return null;
         }
@@ -39,7 +49,11 @@ public class PostService {
 
     public PostResponse getPost(Long Id) {
         Optional<Post> post = postRepository.findById(Id);
-        return post.map(PostResponse::new).orElse(null);
+        return post.map((p) -> {
+            List<Like> likes = postRepository.findLikes(p.getId());
+            List<LikeResponse> likeResponses = likes.stream().map(LikeResponse::new).toList();
+            return new PostResponse(p, likeResponses);
+        }).orElse(null);
     }
 
     public PostResponse createPost(PostCreateRequest postCreateRequest) {
@@ -51,7 +65,9 @@ public class PostService {
             post.setTitle(postCreateRequest.getTitle());
             post.setText(postCreateRequest.getText());
             postRepository.save(post);
-            return new PostResponse(post);
+            List<Like> likes = postRepository.findLikes(post.getId());
+            List<LikeResponse> likeResponses = likes.stream().map(LikeResponse::new).toList();
+            return new PostResponse(post, likeResponses);
         } else {
             return null;
         }
@@ -64,7 +80,9 @@ public class PostService {
             foundPost.setTitle(postUpdateRequest.getTitle());
             foundPost.setText(postUpdateRequest.getText());
             postRepository.save(foundPost);
-            return new PostResponse(foundPost);
+            List<Like> likes = postRepository.findLikes(foundPost.getId());
+            List<LikeResponse> likeResponses = likes.stream().map(LikeResponse::new).toList();
+            return new PostResponse(foundPost, likeResponses);
         } else {
             return null;
         }
