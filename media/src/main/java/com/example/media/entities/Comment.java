@@ -6,6 +6,8 @@ import lombok.Data;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "comments")
 @Data
@@ -27,4 +29,6 @@ public class Comment {
     @Lob
     @Column(columnDefinition = "text")
     private String text;
+
+    private LocalDateTime createdAt;
 }

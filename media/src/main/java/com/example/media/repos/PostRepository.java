@@ -18,4 +18,8 @@ public interface PostRepository extends JpaRepository<Post, Long> {
 
     @Query(nativeQuery = true, value = "select * from posts where user_id = :id")
     List<Post> findUserPosts(@Param("id") Long id);
+
+    @Query(nativeQuery = true,
+            value = "select id from posts where user_id = :userId order by created_at desc limit 5")
+    List<Long> findTopByUserId(@Param("userId") Long userId);
 }

@@ -1,6 +1,7 @@
 package com.example.media.security;
 
 import com.example.media.services.JWTUserDetailsService;
+import com.example.media.services.UserDetailsServiceImpl;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -22,7 +23,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     JWTTokenProvider jwtTokenProvider;
 
     @Autowired
-    JWTUserDetailsService userDetailsService;
+    UserDetailsServiceImpl userDetailsService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -40,7 +41,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
             }
         } catch (Exception e) {
-            return;
+
         }
         filterChain.doFilter(request, response);
     }

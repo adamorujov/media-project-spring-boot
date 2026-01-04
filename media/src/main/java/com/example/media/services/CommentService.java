@@ -10,6 +10,7 @@ import com.example.media.requests.CommentCreateRequest;
 import com.example.media.responses.CommentResponse;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -68,6 +69,7 @@ public class CommentService {
             comment.setPost(post.get());
             comment.setUser(user.get());
             comment.setText(commentCreateRequest.getText());
+            comment.setCreatedAt(LocalDateTime.now());
             commentRepository.save(comment);
             return new CommentResponse(comment);
         }

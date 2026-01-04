@@ -11,6 +11,8 @@ import com.example.media.responses.LikeResponse;
 import com.example.media.responses.PostResponse;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -64,6 +66,7 @@ public class PostService {
             post.setUser(user.get());
             post.setTitle(postCreateRequest.getTitle());
             post.setText(postCreateRequest.getText());
+            post.setCreatedAt(LocalDateTime.now());
             postRepository.save(post);
             List<Like> likes = postRepository.findLikes(post.getId());
             List<LikeResponse> likeResponses = likes.stream().map(LikeResponse::new).toList();
